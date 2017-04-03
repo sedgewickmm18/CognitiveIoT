@@ -20,6 +20,10 @@ Plenty of time to close windows now ..<br>
 Maybe someone should call my neighbors ...<br>
 
 
+
+#### Edge computing is not enough
+
+
 [Next slide](BasicArchitecture.md)
 
 
