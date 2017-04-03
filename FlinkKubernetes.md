@@ -6,4 +6,9 @@
 
 #### Focusing on the speed layer only
 
-[Next slide: Flink on kubernetes](FlinkKubernetes.md)
+[Real Life: Flink on kubernetes](https://console.ng.bluemix.net)
+
+
+#### Shield engine on Flink
+
+[Next slide: Shield on Flink](ShieldOnFlink.md)
