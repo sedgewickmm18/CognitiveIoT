@@ -18,7 +18,7 @@ Place a couple of water-sensors and notify me ... <br>
 More sensors increase the chance of false positives. <br>
 
 #### Less-is-more approach  
-![Less is more](http://www.azquotes.com/picture-quotes/quote-less-is-more-ludwig-mies-van-der-rohe-24-95-11.jpg)
+![Less is more](http://68.media.tumblr.com/9f38b8043253a41c401142e573dfa400/tumblr_inline_njlongROsx1szr6tl.jpg)
 
 What about a sequence of events: If sensors are signalling one-by-one ... would that be a good indicator ?
 
