@@ -6,7 +6,7 @@
 
 #### Focusing on the speed layer only
 
-[Real Life: Flink on kubernetes](https://console.ng.bluemix.net)
+[Real Life: Flink on kubernetes, Dallas](https://console.ng.bluemix.net)
 
 
 #### Shield engine on Flink
