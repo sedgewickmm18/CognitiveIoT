@@ -2,7 +2,8 @@
 Slides for the meetup
 
 [Do I have water in my basement ?](WaterSensors.md)
-
+<br><br>
 ![house under water](house_under_water.jpg)
 
-and other questions of general importance.
+<br>
+### and other questions of general importance.

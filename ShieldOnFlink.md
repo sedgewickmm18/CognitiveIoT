@@ -21,6 +21,10 @@ or an even more complex example
 
 #### Shield engine on Flink
 
-[Next slide: Elderly Care Shield](ElderlyCareShield.md)
+[Elderly Care Shield - Job.scala](https://github.ibm.com/IoT-Insurance/flink-pocs/blob/master/medium-complex-shields/elderly-care-shield/src/main/scala/ibm/Job.scala)
+[Elderly Care Shield - EventProcessFunction.scala](https://github.ibm.com/IoT-Insurance/flink-pocs/blob/master/medium-complex-shields/elderly-care-shield/src/main/scala/ibm/EventProcessFunction.scala)
 
+#### What about the throughput ?
+
+[our results](LocalMosquitto.md)
 

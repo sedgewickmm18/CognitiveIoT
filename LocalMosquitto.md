@@ -1,7 +1,7 @@
-## IoT at home 
-or 
 
-### Do I have water in my basement ?<ht>
+### Locally deployed mosquitto + JMeter
+
+Driving events into the system with a locally deployed mosquitto running JMeter on the same docker container
 
 <br>
 
