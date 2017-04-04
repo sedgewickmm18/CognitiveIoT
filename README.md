@@ -6,4 +6,12 @@ Slides for the meetup
 ![house under water](house_under_water.jpg)
 
 <br>
-### and other questions of general importance.
+
+#### and other questions of general importance.
+
+
+#### Presented by:
+* Patrick
+* Bilal
+* Thomas (in Sweden)
+* Markus
