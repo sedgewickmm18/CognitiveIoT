@@ -3,11 +3,11 @@
 Shield are complex event expressions like
 
 <code> 
-If (WaterleakSensor has fired) &&<br>
-&nbsp; if (another waterleakSensor has fired) &&<br>
-&nbsp; &nbsp; while "I'm away"<br>
+If (WaterleakSensor has fired) && <br>
+&nbsp; if (another waterleakSensor has fired) && <br>
+&nbsp; &nbsp; while "I'm away" <br>
 &nbsp; &nbsp; &nbsp; then send push notification
-   </code><br>
+   </code> <br>
 
 or an even more complex example
 ![Elderly care](https://github.com/sedgewickmm18/diagrams/blob/master/IoT4I%20-%20ElderlyCare.png)
@@ -15,7 +15,7 @@ or an even more complex example
 
 #### Shield on Bluemix
 
-[Real Life: Flink on Bluemix](http://134.168.58.194:8081/#/overview)
+[Real Life: Flink on Bluemix](https://console.eu-gb.bluemix.net/dashboard/containers?filter=container)
 
 <small>*no kubernetes due to 4 GB barrier on beta<br>
 
