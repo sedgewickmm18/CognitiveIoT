@@ -1,7 +1,8 @@
 
 ### Locally deployed mosquitto + JMeter
 
-Driving events into Flink with a locally deployed mosquitto running JMeter on the same docker container
+We eliminated 'Bluemix frontdoor' related limits on network transfer rates, so we decided to deploy mosquitto along with JMeter in the same docker container space.
+
 
 <br>
 
@@ -15,7 +16,8 @@ Driving events into Flink with a locally deployed mosquitto running JMeter on th
 ![Metric #1](metrics-source.jpeg)
 ![Metric #2](metrics-source-2.jpeg)
 
-NFS and mosquitto are responsible for the staircase like appearance.
+Checkpointing on (slow) NFS is responsible to some degree for the staircase appearance, but it turns out the MQTT protocol for QoS 2 takes more blame (checkpointed MQTT messages are acknowledged one by one).
+Nevertheless, in the meantime we raised the throughput to ~1000 events per second.
 
 <br><br>
 While the results in general look satisfying, a container deployment is not suitable for large customers or a multitenant deployment, i.e. multiple customers sharing a single Flink installation - maybe with separate taskmanagers.
