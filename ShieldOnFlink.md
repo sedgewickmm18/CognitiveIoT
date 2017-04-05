@@ -15,7 +15,7 @@ or an even more complex example
 
 #### Shield on Bluemix
 
-[Real Life: Flink on Bluemix](https://console.eu-gb.bluemix.net/dashboard/containers?filter=container)
+[Real Life: Flink on Bluemix Containers](https://console.eu-gb.bluemix.net/dashboard/containers?filter=container)
 
 <small>*no kubernetes due to 4 GB barrier on beta<br>
 
