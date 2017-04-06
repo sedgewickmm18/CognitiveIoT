@@ -6,4 +6,6 @@
 
 #### Focusing on the speed layer only
 
-[Next slide: Flink on kubernetes](FlinkKubernetes.md)
+We selected Flink to implement our speed layer.
+
+[Next slide: What is Flink](WhatIsFlink.md)
