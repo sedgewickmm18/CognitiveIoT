@@ -1,0 +1,213 @@
+# TODO: health checks on job/task managers
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flink-config
+data:
+  zkhosts: zk-0.zk-headless.default.svc.cluster.local:2181,zk-1.zk-headless.default.svc.cluster.local:2181,zk-2.zk-headless.default.svc.cluster.local:2181
+  zkroot: /flink
+  ha.storage.dir: swift2d://REPLACEME.bmv3/flink-ha/
+  checkpoint.dir:   swift2d://REPLACEME.bmv3/checkpoints/
+  # Object storage credentials
+  fs.swift2d.service.bmv3.auth.url: https://identity.open.softlayer.com/v3/auth/tokens
+  fs.swift2d.service.bmv3.public: "true"
+  fs.swift2d.service.bmv3.tenant: 5c1cb80399a84f4aaad040d313480928  # projectid
+  fs.swift2d.service.bmv3.password: qs-XrhA4AvaF9DG?
+  fs.swift2d.service.bmv3.username: 86849dcd49954d4ab9fe905c60161140  # userid
+  fs.swift2d.service.bmv3.region: dallas
+  # host name should not be necessary in a alluxio-ft url, but flink throw error otherwise
+  # ha.storage.dir: alluxio-ft://dummy:19998/flink-ha/
+  # checkpoint.dir: alluxio-ft://dummy:19998/checkpoints/
+  # ha.storage.dir: file:///flink-ha/
+  # checkpoint.dir: file:///checkpoints/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobmanager-headless
+  labels:
+    app: jobmanager-headless
+spec:
+  ports:
+  - port: 8081
+    name: dashboard
+  clusterIP: None
+  selector:
+    name: jobmanager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskmanger-headless
+  labels:
+    app: taskmanger-headless
+spec:
+  ports:
+  - port: 80
+    name: dummy
+  clusterIP: None
+  selector:
+    name: taskmanager
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: jobmanager
+  labels:
+    name: jobmanager
+spec:
+  serviceName: jobmanager-headless
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: jobmanager
+    spec:
+      containers:
+      - name: flink
+        # image: tma75/flink:latest
+        image: tma75/flink-stocator:latest
+        imagePullPolicy: Always
+        args: ["jobmanager"]
+        env:
+          - name: ZKHOSTS
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: zkhosts
+          - name: ZKROOT
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: zkroot
+          - name: HASTORAGEDIR
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: ha.storage.dir
+          - name: CHECKPOINTDIR
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: checkpoint.dir
+          - name: AUTH_URL
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.auth.url
+          - name: PUBLIC
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.public
+          - name: TENANT
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.tenant
+          - name: PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.password
+          - name: USERNAME
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.username
+          - name: REGION
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.region
+      #   volumeMounts:
+      #     - mountPath: /flink-ha
+      #       name: hastorage
+      #     - mountPath: /checkpoints
+      #       name: checkpoints
+      # volumes:
+      # - name: hastorage
+      #   emptyDir: {}
+      # - name: checkpoints
+      #   emptyDir: {}
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: taskmanager
+  labels:
+    name: taskmanager
+spec:
+  serviceName: taskmanger-headless
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        name: taskmanager
+    spec:
+      containers:
+      - name: flink
+        image: tma75/flink-stocator:latest
+        args: ["taskmanager"]
+        imagePullPolicy: Always
+        env:
+          - name: ZKHOSTS
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: zkhosts
+          - name: ZKROOT
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: zkroot
+          - name: HASTORAGEDIR
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: ha.storage.dir
+          - name: CHECKPOINTDIR
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: checkpoint.dir
+          - name: AUTH_URL
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.auth.url
+          - name: PUBLIC
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.public
+          - name: TENANT
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.tenant
+          - name: PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.password
+          - name: USERNAME
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.username
+          - name: REGION
+            valueFrom:
+              configMapKeyRef:
+                  name: flink-config
+                  key: fs.swift2d.service.bmv3.region
+      #   volumeMounts:
+      #     - mountPath: /flink-ha
+      #       name: hastorage
+      #     - mountPath: /checkpoints
+      #       name: checkpoints
+      # volumes:
+      # - name: hastorage
+      #   emptyDir: {}
+      # - name: checkpoints
+      #   emptyDir: {}

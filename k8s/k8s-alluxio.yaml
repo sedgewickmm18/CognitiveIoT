@@ -1,0 +1,136 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alluxio-config
+data:
+  zkhosts: "zk-0.zk-headless.default.svc.cluster.local:2181,zk-1.zk-headless.default.svc.cluster.local:2181,zk-2.zk-headless.default.svc.cluster.local:2181"
+  # Use whatever storage we will have
+  ha.storage.dir: "file:///master-journal/"
+  alluxio.worker.block.heartbeat.timeout.ms: "120000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alluxio-master-headless
+  labels:
+    app: alluxio-master-headless
+spec:
+  ports:
+  - port: 19998
+    name: master
+  clusterIP: None
+  selector:
+    name: alluxiomaster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alluxio-worker-headless
+  labels:
+    app: alluxio-worker-headless
+spec:
+  ports:
+  - port: 29998
+    name: worker
+  clusterIP: None
+  selector:
+    name: alluxioworker
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: alluxiomaster
+  labels:
+    name: alluxiomaster
+spec:
+  serviceName: alluxio-master-headless
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: alluxiomaster
+    spec:
+      containers:
+      - name: alluxio
+        image: tma75/alluxio
+        args: ["master"]
+        imagePullPolicy: Always
+        # Setting up access rights so flink user can access storage. Revisit for swift api
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/opt/alluxio/bin/alluxio", "fs", "chmod", "777", /]
+        env:
+          # ALLUXIO_MASTER_HOSTNAME will be setup to fqdn in its entry file
+          - name: ALLUXIO_ZOOKEEPER_ENABLED
+            value: "true"
+          - name: ALLUXIO_ZOOKEEPER_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                  name: alluxio-config
+                  key: zkhosts
+          - name: ALLUXIO_MASTER_JOURNAL_FOLDER
+            valueFrom:
+              configMapKeyRef:
+                  name: alluxio-config
+                  key: ha.storage.dir
+        volumeMounts:
+          - name: journal
+            mountPath: /master-journal
+      volumes:
+      - name: journal
+        emptyDir: {}
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: alluxioworker
+  labels:
+    name: alluxioworker
+spec:
+  serviceName: alluxio-worker-headless
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        name: alluxioworker
+    spec:
+      containers:
+      - name: alluxio
+        image: tma75/alluxio
+        args: ["worker"]
+        imagePullPolicy: Always
+        # Setting up access rights so flink user can access storage. Revisit for swift api
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/opt/alluxio/bin/alluxio", "fs", "chmod", "777", /]
+        env:
+          # ALLUXIO_WORKER_HOSTNAME will be setup to fqdn in its entry file
+          - name: ALLUXIO_ZOOKEEPER_ENABLED
+            value: "true"
+          - name: ALLUXIO_ZOOKEEPER_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                  name: alluxio-config
+                  key: zkhosts
+          - name: ALLUXIO_WORKER_BLOCK_HEARTBEAT_TIMEOUT_MS
+            valueFrom:
+              configMapKeyRef:
+                  name: alluxio-config
+                  key: alluxio.worker.block.heartbeat.timeout.ms
+          - name: ALLUXIO_RAM_FOLDER
+            value: /mnt/ramdisk
+            # TOOD: Sizing, 10GB?
+          - name: ALLUXIO_WORKER_MEMORY_SIZE
+            value: 2GB
+            # Using local filesystem, update with swift storage
+          #- name: ALLUXIO_UNDERFS_ADDRESS
+          #  value: ...
+        volumeMounts:
+          - name: ramdisk
+            mountPath: /mnt/ramdisk
+      volumes:
+      - name: ramdisk
+        emptyDir:
+          medium: "Memory"
