@@ -1,4 +1,5 @@
-# After-HadoopsummitMeetupIoT
+# CognitiveIoT Munich Meetup
+
 Slides for the meetup
 
 [Do I have water in my basement ?](WaterSensors.md)
@@ -10,8 +11,8 @@ Slides for the meetup
 #### and other questions of general importance.
 
 
-#### Presented by:
+#### Developed by:
 * Patrick
 * Bilal
-* Thomas (in Sweden)
+* Thomas
 * Markus
